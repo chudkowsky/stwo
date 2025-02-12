@@ -8,10 +8,11 @@ pub use poseidon252::Poseidon252Channel;
 
 mod blake2s;
 pub use blake2s::Blake2sChannel;
+use serde::Serialize;
 
 pub const EXTENSION_FELTS_PER_HASH: usize = 2;
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default,Serialize)]
 pub struct ChannelTime {
     pub n_challenges: usize,
     n_sent: usize,

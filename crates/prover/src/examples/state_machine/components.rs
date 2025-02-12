@@ -31,7 +31,7 @@ pub type StateMachineOp1Component = FrameworkComponent<StateTransitionEval<1>>;
 
 /// State machine with state of size `STATE_SIZE`.
 /// Transition `COORDINATE` of state increments the state by 1 at that offset.
-#[derive(Clone)]
+#[derive(Clone,Debug)]
 pub struct StateTransitionEval<const COORDINATE: usize> {
     pub log_n_rows: u32,
     pub lookup_elements: StateMachineElements,
@@ -111,7 +111,7 @@ fn state_transition_info<const INDEX: usize>() -> InfoEvaluator {
     };
     component.evaluate(InfoEvaluator::empty())
 }
-
+#[derive(Debug)]
 pub struct StateMachineComponents {
     pub component0: StateMachineOp0Component,
     pub component1: StateMachineOp1Component,

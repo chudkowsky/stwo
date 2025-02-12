@@ -117,7 +117,7 @@ pub trait FrameworkEval {
 
     fn evaluate<E: EvalAtRow>(&self, eval: E) -> E;
 }
-
+#[derive(Debug)]
 pub struct FrameworkComponent<C: FrameworkEval> {
     pub(super) eval: C,
     pub(super) trace_locations: TreeVec<TreeSubspan>,
