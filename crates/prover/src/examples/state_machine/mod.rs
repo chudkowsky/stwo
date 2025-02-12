@@ -12,7 +12,7 @@ use gen::{gen_interaction_trace, gen_trace};
 use itertools::{chain, Itertools};
 
 use crate::constraint_framework::TraceLocationAllocator;
-use crate::core::backend::simd::m31::LOG_N_LANES;
+// use crate::core::backend::simd::m31::LOG_N_LANES;
 use crate::core::backend::simd::SimdBackend;
 use crate::core::channel::Blake2sChannel;
 use crate::core::fields::m31::M31;
@@ -29,13 +29,15 @@ pub fn prove_state_machine(
     config: PcsConfig,
     channel: &mut Blake2sChannel,
     track_relations: bool,
+    row_x: u32,
+    row_y: u32,
 ) -> (
     StateMachineComponents,
     StateMachineProof<Blake2sMerkleHasher>,
     Option<RelationSummary>,
 ) {
-    let (x_axis_log_rows, y_axis_log_rows) = (log_n_rows, log_n_rows - 1);
-    assert!(y_axis_log_rows >= LOG_N_LANES && x_axis_log_rows >= LOG_N_LANES);
+    let (x_axis_log_rows, y_axis_log_rows) = (row_x, row_y);
+    // assert!(y_axis_log_rows >= LOG_N_LANES && x_axis_log_rows >= LOG_N_LANES);
 
     let mut intermediate_state = initial_state;
     intermediate_state[0] += M31::from_u32_unchecked(1 << x_axis_log_rows);
@@ -180,6 +182,8 @@ pub fn verify_state_machine(
 
 #[cfg(test)]
 mod tests {
+    use std::fs;
+
     use num_traits::Zero;
 
     use super::components::{
@@ -191,6 +195,7 @@ mod tests {
     use crate::constraint_framework::{
         assert_constraints, FrameworkEval, Relation, TraceLocationAllocator,
     };
+    // use crate::core::air::Component;
     use crate::core::channel::Blake2sChannel;
     use crate::core::fields::m31::M31;
     use crate::core::fields::qm31::QM31;
@@ -246,7 +251,7 @@ mod tests {
         // Setup protocol.
         let channel = &mut Blake2sChannel::default();
         let (component, ..) =
-            prove_state_machine(log_n_rows, initial_state, config, channel, false);
+            prove_state_machine(log_n_rows, initial_state, config, channel, false,8,8);
 
         let interaction_elements = component.component0.lookup_elements.clone();
         let initial_state_comb: QM31 = interaction_elements.combine(&initial_state);
@@ -275,6 +280,7 @@ mod tests {
             config,
             &mut Blake2sChannel::default(),
             true,
+            8,8
         );
         let summary = summary.unwrap();
         let relation_info = summary.get_relation_info("StateMachineElements").unwrap();
@@ -299,15 +305,17 @@ mod tests {
 
     #[test]
     fn test_state_machine_prove() {
-        let log_n_rows = 8;
+        let log_n_rows = 16;
         let config = PcsConfig::default();
         let initial_state = [M31::zero(); STATE_SIZE];
         let prover_channel = &mut Blake2sChannel::default();
         let verifier_channel = &mut Blake2sChannel::default();
 
         let (components, proof, _) =
-            prove_state_machine(log_n_rows, initial_state, config, prover_channel, false);
+            prove_state_machine(log_n_rows, initial_state, config, prover_channel, false,9,6);
 
+        fs::write("proof.json", serde_json::to_string(&proof).unwrap()).unwrap();
+        // dbg!(x);
         verify_state_machine(verifier_channel, components, proof).unwrap();
     }
 

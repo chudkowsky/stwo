@@ -1,4 +1,5 @@
 use num_traits::{One, Zero};
+use serde::{Deserialize, Serialize};
 
 use crate::constraint_framework::relation_tracker::{
     RelationTrackerComponent, RelationTrackerEntry,
@@ -65,7 +66,7 @@ impl<const COORDINATE: usize> FrameworkEval for StateTransitionEval<COORDINATE> 
         eval
     }
 }
-
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct StateMachineStatement0 {
     pub n: u32,
     pub m: u32,
@@ -91,7 +92,7 @@ impl StateMachineStatement0 {
         channel.mix_u64(self.m as u64);
     }
 }
-
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct StateMachineStatement1 {
     pub x_axis_claimed_sum: SecureField,
     pub y_axis_claimed_sum: SecureField,
@@ -166,7 +167,7 @@ pub fn track_state_machine_relations(
 
     entries
 }
-
+#[derive(Clone,Debug,Serialize,Deserialize)]
 pub struct StateMachineProof<H: MerkleHasher> {
     pub public_input: [State; 2], // Initial and final state.
     pub stmt0: StateMachineStatement0,
