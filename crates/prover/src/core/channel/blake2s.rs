@@ -1,6 +1,6 @@
 use std::iter;
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use super::{Channel, ChannelTime};
 use crate::core::fields::m31::{BaseField, N_BYTES_FELT, P};
@@ -14,7 +14,7 @@ pub const BLAKE_BYTES_PER_HASH: usize = 32;
 pub const FELTS_PER_HASH: usize = 8;
 
 /// A channel that can be used to draw random elements from a [Blake2sHash] digest.
-#[derive(Default, Clone, Serialize)]
+#[derive(Default, Clone, Serialize,Deserialize)]
 pub struct Blake2sChannel {
     digest: Blake2sHash,
     pub channel_time: ChannelTime,
