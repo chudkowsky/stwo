@@ -182,8 +182,6 @@ pub fn verify_state_machine(
 
 #[cfg(test)]
 mod tests {
-    use std::fs;
-
     use num_traits::Zero;
 
     use super::components::{
@@ -314,7 +312,6 @@ mod tests {
         let (components, proof, _) =
             prove_state_machine(log_n_rows, initial_state, config, prover_channel, false,9,6);
 
-        fs::write("proof.json", serde_json::to_string(&proof).unwrap()).unwrap();
         // dbg!(x);
         verify_state_machine(verifier_channel, components, proof).unwrap();
     }
