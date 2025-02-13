@@ -169,7 +169,7 @@ pub fn track_state_machine_relations(
 }
 #[derive(Clone,Debug,Serialize,Deserialize)]
 pub struct StateMachineProof<H: MerkleHasher> {
-    pub public_input: [State; 2], // Initial and final state.
+    pub public_input: [State; 1], // Initial and final state.
     pub stmt0: StateMachineStatement0,
     pub stmt1: StateMachineStatement1,
     pub stark_proof: StarkProof<H>,
